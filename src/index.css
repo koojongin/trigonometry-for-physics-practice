@@ -1,0 +1,45 @@
+@font-face {
+    font-family: 'MaplestoryOTFBold';
+    src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_20-04@2.1/MaplestoryOTFBold.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+}
+
+* {
+    font-family: 'MaplestoryOTFBold';
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    display: flex;
+}
+
+.wrapper {
+    margin: auto;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+}
+
+canvas {
+
+}
+.start-button:hover{
+    background: #f8f8f8;
+}
+.start-button {
+    border: solid 1px;
+    position: absolute;
+    width: 1280px;
+    height: 720px;
+    display: flex;
+    cursor: pointer;
+    align-items: center;
+    justify-content: center;
+    font-size: 40px;
+    top: 0;
+    z-index: 10;
+}
