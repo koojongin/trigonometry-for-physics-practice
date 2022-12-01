@@ -4,36 +4,52 @@ import MushRoomImage from "../../assets/monster/mushroom.sheet.png";
 import Rectangle from "./Rectangle";
 
 //TODO: 클래스화
-export function Monster(scene, position) {
-  if (!scene) throw new Error("not enough parmater 'scene'.")
-  const {context} = scene;
-  const monster = new GameObject();
-  monster.position = position;
-  monster.width = MONSTER.MUSHROOM.WIDTH;
-  monster.height = MONSTER.MUSHROOM.HEIGHT;
-  monster.rect = new Rectangle(position.x, position.y, monster.width, monster.height);
-  const sheet = new Image();
-  sheet.src = MushRoomImage;
-
-  const sheetOffset = [
+export class Monster extends GameObject {
+  sheetOffset = [
     [63 * 0, 0, 63, 56],
     [63 * 1, 0, 63, 56],
     [63 * 2, 0, 63, 56],
   ];
+  spriteIndex = 0;
+  animationBuffer = 25;
+  animationBufferCount = 0;
+  hp = 20;
+  
+  tags = ['Monster'];
 
-  let spriteIndex = 0;
-  const animationBuffer = 25;
-  let animationBufferCount = 0;
-  monster.update = () => {
-    context.drawImage(sheet, sheetOffset[spriteIndex][0], 0, 63, 56, monster.position.x, monster.position.y, 63, 56);
-    animationBufferCount++;
-    if (animationBufferCount >= animationBuffer) {
-      spriteIndex++;
-      animationBufferCount = 0;
+  constructor(scene, position) {
+    if (!scene) throw new Error("not enough parmater 'scene'.")
+    super(scene, position);
+    this.create();
+  }
+
+  create() {
+    this.width = MONSTER.MUSHROOM.WIDTH;
+    this.height = MONSTER.MUSHROOM.HEIGHT;
+    this.rect = new Rectangle(this.position.x, this.position.y, this.width, this.height);
+    const sheet = new Image();
+    sheet.src = MushRoomImage;
+    this.sheet = sheet;
+  }
+
+  update() {
+    const {context} = this.scene;
+    context.drawImage(this.sheet, this.sheetOffset[this.spriteIndex][0], 0, 63, 56, this.position.x, this.position.y, 63, 56);
+    this.animationBufferCount++;
+    if (this.animationBufferCount >= this.animationBuffer) {
+      this.spriteIndex++;
+      this.animationBufferCount = 0;
     }
-    if (spriteIndex >= sheetOffset.length) {
-      spriteIndex = 0;
+    if (this.spriteIndex >= this.sheetOffset.length) {
+      this.spriteIndex = 0;
     }
   }
-  return monster;
+
+  onCollision(target) {
+    if (target.tags.includes('Shuriken')) {
+      this.hp -= target.damage;
+      if (this.hp <= 0)
+        this.scene.monsters.splice(this.index, 1);
+    }
+  }
 }

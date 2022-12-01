@@ -4,23 +4,20 @@ export default class Rectangle {
   // width;
   // height;
 
-  constructor(x, y, width, height) {
-    if (x === undefined) {
+  constructor(x, y, width, height, args) {
+    if (x === undefined)
       x = 0;
-    }
-    if (y === undefined) {
+    if (y === undefined)
       y = 0;
-    }
-    if (width === undefined) {
+    if (width === undefined)
       width = 0;
-    }
-    if (height === undefined) {
+    if (height === undefined)
       height = 0;
-    }
     this.x = x;
     this.y = y;
     this.width = width;
     this.height = height;
+    Object.assign(this, {...args});
   }
 
   contains(rect) {

@@ -17,6 +17,6 @@ export function getVelocity(p1, p2) {
   // 캔버스 역좌표땜에 y축은 -붙여야함
   const y = -Math.sin(degrees * Math.PI / 180);
   return {
-    x, y
+    x, y, degrees
   }
 }

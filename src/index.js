@@ -3,6 +3,7 @@ import {BOX, CANVAS, FPS} from "./constants";
 import MushRoomImage from '/assets/monster/mushroom.sheet.png';
 import ErevBackground from '/assets/erev-background.png';
 import ShurikenImage from '/assets/shuriken.png';
+import MapleBackground from "../assets/maple-background.png";
 
 
 document.addEventListener('DOMContentLoaded', onload);
@@ -40,7 +41,7 @@ async function onload() {
 
 
   function start() {
-    const firstScene = new FirstScene(context);
+    const firstScene = new FirstScene(context, canvasElement);
     setInterval(() => {
       context.clearRect(0, 0, CANVAS.WIDTH, CANVAS.HEIGHT);
       // drawDebugBackground();
@@ -52,7 +53,7 @@ async function onload() {
 
 
 function loadResources() {
-  const imagePaths = [MushRoomImage, ErevBackground, ShurikenImage];
+  const imagePaths = [MushRoomImage, ErevBackground, ShurikenImage, MapleBackground];
   return imagePaths.map((imagePath) => {
     const image = new Image();
     image.src = imagePath;
