@@ -74,11 +74,15 @@ export default class FirstScene extends Scene {
     // this.context.fillText(text, CANVAS.WIDTH / 2 - textBoxWidth / 2, CANVAS.HEIGHT / 2 - textBoxHeight / 2);
 
     const background = new Image();
-    background.src = MapleBackground;//ErevBackground;
+    background.src = ErevBackground//MapleBackground;
     this.context.globalAlpha = 0.5;
     this.context.drawImage(background, 0, 0, CANVAS.WIDTH, CANVAS.HEIGHT);
     this.context.globalAlpha = 1;
     this.context.fillStyle = "#b72424";
+    
+    const backgroundUI = new Image();
+    backgroundUI.src = MapleBackground;
+    this.context.drawImage(backgroundUI, 0, 0, CANVAS.WIDTH, CANVAS.HEIGHT);
 
     this.gameObjects = [...this.monsters, this.player, ...this.player.gameObjects, ...this.textObjects];
     this.updateGameObjects(this.gameObjects);

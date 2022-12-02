@@ -14,7 +14,7 @@ export class Monster extends GameObject {
   animationBuffer = 25;
   animationBufferCount = 0;
   hp = 20;
-  
+
   tags = ['Monster'];
 
   constructor(scene, position) {
