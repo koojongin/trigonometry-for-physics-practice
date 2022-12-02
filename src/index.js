@@ -4,6 +4,9 @@ import MushRoomImage from '/assets/monster/mushroom.sheet.png';
 import ErevBackground from '/assets/erev-background.png';
 import ShurikenImage from '/assets/shuriken.png';
 import MapleBackground from "../assets/maple-background.png";
+import ThrowShurikenAudio from "../assets/audio/throw-shuriken.ogg";
+import CollisionShurikenAudio from "../assets/audio/collision-shuriken.ogg";
+import ErevBGM from "../assets/audio/erev.ogg";
 
 
 document.addEventListener('DOMContentLoaded', onload);
@@ -37,7 +40,7 @@ async function onload() {
     context.fillRect(box.x, box.y, 20, 20);
   });
 
-  const Resources = await Promise.all(loadResources());
+  const Resources = await loadResources();
 
 
   function start() {
@@ -52,9 +55,25 @@ async function onload() {
 }
 
 
-function loadResources() {
-  const imagePaths = [MushRoomImage, ErevBackground, ShurikenImage, MapleBackground];
-  return imagePaths.map((imagePath) => {
+async function loadResources() {
+  const imagePaths = [
+    MushRoomImage, ErevBackground, ShurikenImage, MapleBackground,
+    MapleBackground
+  ];
+
+  const audioPaths = [
+    ThrowShurikenAudio, CollisionShurikenAudio, ErevBGM
+  ];
+
+  const audioPromises = audioPaths.map((audioPath) => {
+    return new Promise((resolve) => {
+      const audio = new Audio(audioPath);
+      audio.oncanplaythrough = () => {
+        resolve(audio);
+      }
+    });
+  })
+  const imagePromises = imagePaths.map((imagePath) => {
     const image = new Image();
     image.src = imagePath;
     return new Promise((resolve, reject) => {
@@ -62,6 +81,11 @@ function loadResources() {
         resolve(image);
       }
     });
-  })
+  });
+
+  const audios = await Promise.all(audioPromises);
+  const images = await Promise.all(imagePromises);
+
+  return [audios, images]
 
 }

@@ -1,4 +1,5 @@
 export function getAngle(_p1, _p2) {
+  // let p1 = _p1;
   let p1 = {x: 0, y: 0};
   let p2 = {x: _p2.x - _p1.x, y: _p2.y - _p1.y};
   const firstAngle = Math.atan2(p2.y, p2.x);
@@ -8,15 +9,20 @@ export function getAngle(_p1, _p2) {
   if (p2.x < 0)
     degrees += 180;
   // degrees += 180;
+  console.log(degrees);
   return degrees;
 }
 
-export function getVelocity(p1, p2) {
-  const degrees = getAngle(p1, p2);
+export function getVelocity(start, end) {
+  const degrees = getAngle(start, end);
   const x = Math.cos(degrees * Math.PI / 180);
   // 캔버스 역좌표땜에 y축은 -붙여야함
   const y = -Math.sin(degrees * Math.PI / 180);
   return {
     x, y, degrees
   }
+}
+
+export function getDistance(position1, position2) {
+  return Math.sqrt((position1.x - position2.x) * (position1.x - position2.x) + (position1.y - position2.y))
 }

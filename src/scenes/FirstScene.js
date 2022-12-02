@@ -23,7 +23,7 @@ export default class FirstScene extends Scene {
     audio.loop = true;
     audio.play();
     this.monsters = [];
-    this.shuriken = new Shuriken(this, {x: 0, y: 0});
+    this.shuriken = new Shuriken(this, {x: -1000, y: 0});
     this.player = new Player(this,
       {
         x: parseInt((CANVAS.WIDTH / 2 - MONSTER.MUSHROOM.WIDTH / 2)),
