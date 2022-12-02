@@ -19,7 +19,7 @@ export default class FirstScene extends Scene {
 
   create() {
     const audio = new Audio(ErevBGM);
-    audio.volume = 0.5;
+    audio.volume = 0.3;
     audio.loop = true;
     audio.play();
     this.monsters = [];
@@ -79,7 +79,7 @@ export default class FirstScene extends Scene {
     this.context.drawImage(background, 0, 0, CANVAS.WIDTH, CANVAS.HEIGHT);
     this.context.globalAlpha = 1;
     this.context.fillStyle = "#b72424";
-    
+
     const backgroundUI = new Image();
     backgroundUI.src = MapleBackground;
     this.context.drawImage(backgroundUI, 0, 0, CANVAS.WIDTH, CANVAS.HEIGHT);

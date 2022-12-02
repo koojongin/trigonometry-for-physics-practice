@@ -3,6 +3,8 @@ import {CANVAS, FONT_FAMILY, SHURIKEN, TO_RADIANS} from "../constants";
 import ShurikenImage from "../../assets/shuriken.png";
 import {getVelocity} from "./Pyhsics";
 import Rectangle from "./Rectangle";
+import TextObject from "./TextObject";
+import DamageTextObject from "./DamageTextObject";
 
 export default class Shuriken extends GameObject {
   cooldown = 150;
@@ -11,6 +13,8 @@ export default class Shuriken extends GameObject {
   width = SHURIKEN.WIDTH;
   height = SHURIKEN.HEIGHT;
   tags = ['Shuriken'];
+  attacked = 0;
+  attackedList = []
   canvasRect = new Rectangle(0, 0, CANVAS.WIDTH, CANVAS.HEIGHT);
 
   constructor(scene, position) {
@@ -70,19 +74,19 @@ export default class Shuriken extends GameObject {
     if (index >= 0) {
       this.scene.player.gameObjects.splice(index, 1);
     }
-    target.onCollision(this);
     if (target?.tags?.includes('Monster')) {
-      // this.scene.textObjects.push()
-      const {context} = this.scene;
-      context.save();
-      context.fillStyle = "#000000";
-      context.font = `20px ${FONT_FAMILY.MAPLE}`;
-      context.textBaseline = 'top';
-      const text = this.damage + "";
-      const {width: textBoxWidth, fontBoundingBoxDescent: textBoxHeight} = context.measureText(text);
+      target.onCollision(this);
       const {position: tPosition, width: tWidth, height: tHeight} = target;
-      context.fillText(text, tPosition.x + tWidth / 2 - textBoxWidth / 2, tPosition.y - textBoxHeight / 2 - 10);
-      context.restore();
+      const textObject = new DamageTextObject(this.scene);
+      textObject.text = this.damage + "";
+      textObject.setColor('#e85252');
+      textObject.setFontSize('25px');
+      const {width: fWidth, height: fHeight} = textObject.getRect();
+      textObject.setPosition(tPosition.x + tWidth / 2 - fWidth / 2, tPosition.y - fHeight);
+      this.scene.textObjects.push(textObject);
+
+      this.attackedList.push(this.timestamp);
+      this.attacked++;
     }
   }
 }

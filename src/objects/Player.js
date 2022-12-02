@@ -48,18 +48,25 @@ export function Player(scene, position) {
 
   function attack() {
     if (player.cooldowns.shuriken >= (scene.shuriken.cooldown - (Shuriken.reduceCooldown || 0))) {
-      const shuriken = new Shuriken(scene, {x: player.position.x + player.width / 2 - SHURIKEN.WIDTH / 2, y: player.position.y + player.height / 2 - SHURIKEN.HEIGHT / 2});
+      const timePosition = {...{x: player.position.x + player.width / 2 - SHURIKEN.WIDTH / 2, y: player.position.y + player.height / 2 - SHURIKEN.HEIGHT / 2}};
+      const shuriken = new Shuriken(scene, timePosition);
       player.gameObjects.push(shuriken);
       if (Shuriken.luckySeven) {
-        const shuriken = new Shuriken(scene, {x: 30 + player.position.x + player.width / 2 - SHURIKEN.WIDTH / 2, y: 30 + player.position.y + player.height / 2 - SHURIKEN.HEIGHT / 2});
-        player.gameObjects.push(shuriken);
+        setTimeout(() => {
+          const shuriken = new Shuriken(scene, {x: player.position.x + player.width / 2 - SHURIKEN.WIDTH / 2, y: player.position.y + player.height / 2 - SHURIKEN.HEIGHT / 2});
+          // const shuriken = new Shuriken(scene, timePosition);
+          player.gameObjects.push(shuriken);
+        }, 50);
       }
 
       if (Shuriken.tripleThrow) {
-        const shuriken = new Shuriken(scene, {x: -30 + player.position.x + player.width / 2 - SHURIKEN.WIDTH / 2, y: 30 + player.position.y + player.height / 2 - SHURIKEN.HEIGHT / 2});
-        player.gameObjects.push(shuriken);
+        // const shuriken = new Shuriken(scene, {x: -30 + player.position.x + player.width / 2 - SHURIKEN.WIDTH / 2, y: 30 + player.position.y + player.height / 2 - SHURIKEN.HEIGHT / 2});
+        setTimeout(() => {
+          const shuriken = new Shuriken(scene, {x: player.position.x + player.width / 2 - SHURIKEN.WIDTH / 2, y: player.position.y + player.height / 2 - SHURIKEN.HEIGHT / 2});
+          // const shuriken = new Shuriken(scene, timePosition);
+          player.gameObjects.push(shuriken);
+        }, 100);
       }
-
 
       player.cooldowns.shuriken = 0;
     } else {
