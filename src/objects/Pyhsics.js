@@ -1,5 +1,4 @@
 export function getAngle(_p1, _p2) {
-  // let p1 = _p1;
   let p1 = {x: 0, y: 0};
   let p2 = {x: _p2.x - _p1.x, y: _p2.y - _p1.y};
   const firstAngle = Math.atan2(p2.y, p2.x);
@@ -8,8 +7,18 @@ export function getAngle(_p1, _p2) {
   let degrees = (angle * 180) / Math.PI;
   if (p2.x < 0)
     degrees += 180;
-  // degrees += 180;
-  console.log(degrees);
+  return degrees;
+}
+
+export function getAngle2(_p1, _p2) {
+  let p1 = {x: 0, y: 0};
+  let p2 = {x: _p2.x - _p1.x, y: _p2.y - _p1.y};
+  const firstAngle = Math.atan2(p2.y, p2.x);
+  const secondAngle = Math.atan2(p1.y, p2.x);
+  const angle = secondAngle - firstAngle;
+  let degrees = (angle * 180) / Math.PI;
+  if (p2.x < 0)
+    degrees += 180;
   return degrees;
 }
 

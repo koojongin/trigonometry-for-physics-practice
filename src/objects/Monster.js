@@ -13,7 +13,7 @@ export class Monster extends GameObject {
   spriteIndex = 0;
   animationBuffer = 25;
   animationBufferCount = 0;
-  hp = 20;
+  hp = 5;
 
   tags = ['Monster'];
 

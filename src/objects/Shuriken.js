@@ -16,7 +16,9 @@ export default class Shuriken extends GameObject {
   height = SHURIKEN.HEIGHT;
   tags = ['Shuriken'];
   attacked = 0;
-  attackedList = []
+  attackedList = [];
+  range = 300;
+  movedDistance = 0;
   canvasRect = new Rectangle(0, 0, CANVAS.WIDTH, CANVAS.HEIGHT);
 
   constructor(scene, position) {
@@ -28,15 +30,15 @@ export default class Shuriken extends GameObject {
 
   create() {
     // this.scene.shuriken.cooldown = this.cooldown;
+    this.range += Shuriken.moreRange || 0;
+    this.startedPosition = {...this.position};
     this.damage = this.damage + (Shuriken.moreDamage || 0);
     const sprite = new Image();
     sprite.src = ShurikenImage;
     this.sprite = sprite;
-    const selectedMonster = this.scene.monsters.at(-1);
-    this.velocity = getVelocity(
-      {x: this.position.x + this.width / 2, y: this.position.y + this.height / 2},
-      {x: selectedMonster?.position.x + selectedMonster?.width / 2, y: selectedMonster?.position.y + selectedMonster?.height / 2}
-    );
+    // const selectedMonster = this.scene.monsters.at(-1);
+    this.velocity = getVelocity({x: this.position.x + this.width / 2, y: this.position.y + this.height / 2}, this.scene.mouse.position);
+    console.log(this.scene.mouse)
     this.rect = new Rectangle(this.position.x, this.position.y, this.width, this.height);
 
     const isInCanvas = this.canvasRect.intersect(this.rect);
@@ -70,14 +72,26 @@ export default class Shuriken extends GameObject {
     this.position.y += this.velocity.y * this.speed;
     context.drawImage(this.sprite, this.position.x, this.position.y);
     context.restore();
-    // angle += 145;
+
     this.scene.monsters.forEach((monster, monsterIndex) => {
       const isCollision = monster.rect.intersect(this.rect);
       if (isCollision) {
         monster.index = monsterIndex;
         this.onCollision(monster);
       }
-    })
+    });
+
+    this.movedDistance += Math.sqrt((this.velocity.x * this.speed) * (this.velocity.x * this.speed) + (this.velocity.y * this.speed) * (this.velocity.y * this.speed));
+    if (this.movedDistance >= this.range) {
+      this.destroy();
+    }
+  }
+
+  destroy() {
+    const index = this.scene.player.gameObjects.findIndex(object => object.timestamp == this.timestamp);
+    if (index >= 0) {
+      this.scene.player.gameObjects.splice(index, 1);
+    }
   }
 
   onCollision(target) {
@@ -89,21 +103,18 @@ export default class Shuriken extends GameObject {
       } else {
         const lastAttackedMonster = this.attackedList.at(-1);
         const filteredMonsters = this.scene?.monsters.filter((monster) => {
-          return monster?.timestamp != lastAttackedMonster?.timestamp
+          return monster?.timestamp != lastAttackedMonster?.timestamp && monster?.timestamp != target.timestamp
         }).map((monster) => {
           return {
-            distance: getDistance(monster.position, this.position),
-            position: monster.position
+            distance: getDistance(monster.position, this.position), ...monster
           }
         });
 
         const [mostNearMonster] = _.sortBy(filteredMonsters, (monster) => {
           return monster.distance
-        })
+        });
         if (mostNearMonster) {
-          console.log(mostNearMonster)
-          console.log(this.position, mostNearMonster.position)
-          this.velocity = getVelocity(this.position, mostNearMonster.position);
+          this.velocity = getVelocity({x: this.position.x + this.width / 2, y: this.position.y + this.height / 2}, {x: mostNearMonster?.position.x + mostNearMonster?.width / 2, y: mostNearMonster?.position.y + mostNearMonster?.height / 2});
         }
       }
     }

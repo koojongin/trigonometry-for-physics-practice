@@ -7,10 +7,15 @@ export function Player(scene, position) {
   if (!scene) throw new Error("not enough parmater 'scene'.")
   const {context} = scene;
   const player = new GameObject();
+  player.keyPressed = {
+    up: false, down: false, left: false, right: false
+  }
+  player.gold = 0;
   player.gameObjects = [];
   player.position = position;
   player.width = MONSTER.MUSHROOM.WIDTH;
   player.height = MONSTER.MUSHROOM.HEIGHT;
+  player.speed = 5;
   const sheet = new Image();
   sheet.src = PlayerImage;
 
@@ -29,8 +34,24 @@ export function Player(scene, position) {
     shuriken: scene.shuriken.cooldown
   }
 
+  player.resetKeyPressed = () => {
+    player.keyPressed = {
+      up: false, down: false, left: false, right: false
+    }
+  }
   player.update = () => {
     context.drawImage(sheet, sheetOffset[spriteIndex][0], 0, 63, 56, player.position.x, player.position.y, 63, 56);
+
+    if (player.keyPressed.left)
+      player.position.x -= player.speed;
+    if (player.keyPressed.right)
+      player.position.x += player.speed;
+    if (player.keyPressed.up)
+      player.position.y -= player.speed;
+    if (player.keyPressed.down)
+      player.position.y += player.speed;
+
+
     animationBufferCount++;
     if (animationBufferCount >= animationBuffer) {
       spriteIndex++;
