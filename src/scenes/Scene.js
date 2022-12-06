@@ -16,6 +16,7 @@ export default class Scene {
 
   updateGameObjects(objects) {
     objects.forEach((object) => {
+      if (object.isCustomDraw) return;
       object.update();
     })
   }

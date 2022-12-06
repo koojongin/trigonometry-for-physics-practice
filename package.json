@@ -1,16 +1,26 @@
 {
   "name": "poong-lucky-defence",
+  "browserslist": "> 0.5%, last 2 versions, not dead",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
   "scripts": {
     "start": "parcel index.html",
+    "build": "parcel build index.html",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "src": "^1.1.2"
+    "src": "^1.1.2",
+    "uuid": "^9.0.0"
+  },
+  "devDependencies": {
+    "@babel/plugin-syntax-flow": "^7.18.6",
+    "@babel/preset-flow": "^7.18.6",
+    "@parcel/config-default": "^2.8.0",
+    "@parcel/transformer-raw": "^2.8.0",
+    "parcel": "^2.8.0"
   }
 }

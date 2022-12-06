@@ -45,11 +45,14 @@ async function onload() {
 
   function start() {
     const firstScene = new FirstScene(context, canvasElement);
-    setInterval(() => {
+    let count = 0;
+    const callback = () => requestAnimationFrame(() => {
       context.clearRect(0, 0, CANVAS.WIDTH, CANVAS.HEIGHT);
       // drawDebugBackground();
       firstScene.update();
-    }, 1000 / FPS);
+      callback();
+    });
+    callback();
   }
 
 }

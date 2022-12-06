@@ -2,98 +2,96 @@ import {GameObject} from "./GameObject";
 import {MONSTER, SHURIKEN} from "../constants";
 import PlayerImage from "../../assets/player.sheet.png";
 import Shuriken from "./Shuriken";
+import {LEVEL_UP_TABLE} from "./player/player.constant";
 
-export function Player(scene, position) {
-  if (!scene) throw new Error("not enough parmater 'scene'.")
-  const {context} = scene;
-  const player = new GameObject();
-  player.keyPressed = {
+export class Player extends GameObject {
+  keyPressed = {
     up: false, down: false, left: false, right: false
   }
-  player.gold = 0;
-  player.gameObjects = [];
-  player.position = position;
-  player.width = MONSTER.MUSHROOM.WIDTH;
-  player.height = MONSTER.MUSHROOM.HEIGHT;
-  player.speed = 5;
-  const sheet = new Image();
-  sheet.src = PlayerImage;
-
-  const sheetOffset = [
-    [63 * 0, 0, 63, 56],
-    [63 * 1, 0, 63, 56],
-    [63 * 2, 0, 63, 56],
-  ];
-
-  let spriteIndex = 0;
-  const animationBuffer = 25;
-  let animationBufferCount = 0;
-
-  // let attackCooldownCount = Shuriken.prototype.cooldown;
-  player.cooldowns = {
-    shuriken: scene.shuriken.cooldown
+  level = 1;
+  gold = 0;
+  exp = 0;
+  gameObjects = [];
+  width = MONSTER.MUSHROOM.WIDTH;
+  height = MONSTER.MUSHROOM.HEIGHT;
+  speed = 5;
+  sheetOffset = [[63 * 0, 0, 63, 56], [63 * 1, 0, 63, 56], [63 * 2, 0, 63, 56],];
+  spriteIndex = 0;
+  animationBuffer = 25;
+  animationBufferCount = 0;
+  cooldowns = {
+    shuriken: 0
   }
 
-  player.resetKeyPressed = () => {
-    player.keyPressed = {
+  constructor(scene, position) {
+    if (!scene) throw new Error(`not enough parmater 'scene'.`);
+    super(scene, position);
+    this.create();
+  }
+
+  getCurrentExpPercent() {
+    return (this.exp / LEVEL_UP_TABLE[this.level] * 100).toFixed(2);
+  }
+
+  create() {
+    const sheet = new Image();
+    sheet.src = PlayerImage;
+    this.sheet = sheet;
+    this.cooldowns = {
+      shuriken: this.scene.shuriken.cooldown
+    }
+  }
+
+  resetKeyPressed = () => {
+    this.keyPressed = {
       up: false, down: false, left: false, right: false
     }
   }
-  player.update = () => {
-    context.drawImage(sheet, sheetOffset[spriteIndex][0], 0, 63, 56, player.position.x, player.position.y, 63, 56);
 
-    if (player.keyPressed.left)
-      player.position.x -= player.speed;
-    if (player.keyPressed.right)
-      player.position.x += player.speed;
-    if (player.keyPressed.up)
-      player.position.y -= player.speed;
-    if (player.keyPressed.down)
-      player.position.y += player.speed;
+  update() {
+    const {context} = this.scene;
+    context.drawImage(this.sheet, this.sheetOffset[this.spriteIndex][0], 0, this.width, this.height, this.position.x, this.position.y, this.width, this.height);
 
+    if (this.keyPressed.left) this.position.x -= this.speed;
+    if (this.keyPressed.right) this.position.x += this.speed;
+    if (this.keyPressed.up) this.position.y -= this.speed;
+    if (this.keyPressed.down) this.position.y += this.speed;
 
-    animationBufferCount++;
-    if (animationBufferCount >= animationBuffer) {
-      spriteIndex++;
-      animationBufferCount = 0;
+    this.animationBufferCount++;
+    if (this.animationBufferCount >= this.animationBuffer) {
+      this.spriteIndex++;
+      this.animationBufferCount = 0;
     }
-    if (spriteIndex >= sheetOffset.length) {
-      spriteIndex = 0;
+    if (this.spriteIndex >= this.sheetOffset.length) {
+      this.spriteIndex = 0;
     }
 
-
-    if (scene.monsters?.length == 0) return;
-
-    attack();
+    if (this.scene.monsters?.length == 0) return;
+    this.attack();
   }
 
-  function attack() {
-    if (player.cooldowns.shuriken >= (scene.shuriken.cooldown - (Shuriken.reduceCooldown || 0))) {
-      const timePosition = {...{x: player.position.x + player.width / 2 - SHURIKEN.WIDTH / 2, y: player.position.y + player.height / 2 - SHURIKEN.HEIGHT / 2}};
-      const shuriken = new Shuriken(scene, timePosition);
-      player.gameObjects.push(shuriken);
+  attack() {
+    if (this.cooldowns.shuriken >= (this.scene.shuriken.cooldown - (Shuriken.reduceCooldown || 0))) {
+      const timePosition = {...{x: this.position.x + this.width / 2 - SHURIKEN.WIDTH / 2, y: this.position.y + this.height / 2 - SHURIKEN.HEIGHT / 2}};
+      const shuriken = new Shuriken(this.scene, timePosition);
+      this.gameObjects.push(shuriken);
       if (Shuriken.luckySeven) {
         setTimeout(() => {
-          const shuriken = new Shuriken(scene, {x: player.position.x + player.width / 2 - SHURIKEN.WIDTH / 2, y: player.position.y + player.height / 2 - SHURIKEN.HEIGHT / 2});
-          // const shuriken = new Shuriken(scene, timePosition);
-          player.gameObjects.push(shuriken);
+          const shuriken = new Shuriken(this.scene, {x: this.position.x + this.width / 2 - SHURIKEN.WIDTH / 2, y: this.position.y + this.height / 2 - SHURIKEN.HEIGHT / 2});
+          this.gameObjects.push(shuriken);
         }, 50);
       }
 
       if (Shuriken.tripleThrow) {
-        // const shuriken = new Shuriken(scene, {x: -30 + player.position.x + player.width / 2 - SHURIKEN.WIDTH / 2, y: 30 + player.position.y + player.height / 2 - SHURIKEN.HEIGHT / 2});
         setTimeout(() => {
-          const shuriken = new Shuriken(scene, {x: player.position.x + player.width / 2 - SHURIKEN.WIDTH / 2, y: player.position.y + player.height / 2 - SHURIKEN.HEIGHT / 2});
-          // const shuriken = new Shuriken(scene, timePosition);
-          player.gameObjects.push(shuriken);
+          const shuriken = new Shuriken(this.scene, {x: this.position.x + this.width / 2 - SHURIKEN.WIDTH / 2, y: this.position.y + this.height / 2 - SHURIKEN.HEIGHT / 2});
+          this.gameObjects.push(shuriken);
         }, 100);
       }
 
-      player.cooldowns.shuriken = 0;
+      this.cooldowns.shuriken = 0;
     } else {
-      player.cooldowns.shuriken++;
+      this.cooldowns.shuriken++;
     }
   }
-
-  return player;
 }

@@ -29,7 +29,7 @@ export default class TextObject extends GameObject {
   }
 
   setColor(colorKey) {
-    if(!colorKey)throw new Error('missing parameter colorKey');
+    if (!colorKey) throw new Error('missing parameter colorKey');
     this.fillStyle = colorKey;
   }
 
@@ -41,11 +41,13 @@ export default class TextObject extends GameObject {
     const {width, fontBoundingBoxDescent: height} = this.context.measureText(this.text);
     this.context.restore();
     return {
+      ...this.position,
       width, height
     }
   }
 
   setFontSize(fontSize) {
-    this.fontSize = fontSize;
+    const fs = (fontSize + "").replace('px', '');
+    this.fontSize = `${fs}px`;
   }
 }

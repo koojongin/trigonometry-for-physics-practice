@@ -27,27 +27,30 @@ export default class Shuriken extends GameObject {
     this.create();
   }
 
+  getDamage() {
+    const bonusRank = ((Shuriken.upgrade || 0) * 10 + 100) / 100;
+    return (parseInt((Math.random() * (this.damage + 1)).toFixed(0)) + 1) * bonusRank;
+  }
+
 
   create() {
     // this.scene.shuriken.cooldown = this.cooldown;
     this.range += Shuriken.moreRange || 0;
-    this.startedPosition = {...this.position};
-    this.damage = this.damage + (Shuriken.moreDamage || 0);
+    this.damage = this.getDamage();
     const sprite = new Image();
     sprite.src = ShurikenImage;
     this.sprite = sprite;
     // const selectedMonster = this.scene.monsters.at(-1);
     this.velocity = getVelocity({x: this.position.x + this.width / 2, y: this.position.y + this.height / 2}, this.scene.mouse.position);
-    console.log(this.scene.mouse)
     this.rect = new Rectangle(this.position.x, this.position.y, this.width, this.height);
 
     const isInCanvas = this.canvasRect.intersect(this.rect);
     if (!isInCanvas) return;
     const audio = new Audio(ThrowShurikenAudio);
-    audio.volume = .8;
+    audio.volume = .5;
 
     this.audioCollision = new Audio(CollisionShurikenAudio);
-    audio.volume = .8;
+    audio.volume = .5;
     audio.play();
   }
 
@@ -98,29 +101,27 @@ export default class Shuriken extends GameObject {
     if (this.attackedList.includes(target.timestamp)) return;
     const index = this.scene.player.gameObjects.findIndex(object => object.timestamp == this.timestamp);
     if (index >= 0) {
-      if (this.attacked >= 3) {
-        this.scene.player.gameObjects.splice(index, 1);
-      } else {
-        const lastAttackedMonster = this.attackedList.at(-1);
-        const filteredMonsters = this.scene?.monsters.filter((monster) => {
-          return monster?.timestamp != lastAttackedMonster?.timestamp && monster?.timestamp != target.timestamp
-        }).map((monster) => {
-          return {
-            distance: getDistance(monster.position, this.position), ...monster
-          }
-        });
-
-        const [mostNearMonster] = _.sortBy(filteredMonsters, (monster) => {
-          return monster.distance
-        });
-        if (mostNearMonster) {
-          this.velocity = getVelocity({x: this.position.x + this.width / 2, y: this.position.y + this.height / 2}, {x: mostNearMonster?.position.x + mostNearMonster?.width / 2, y: mostNearMonster?.position.y + mostNearMonster?.height / 2});
+      // const lastAttackedMonster = this.attackedList.at(-1);
+      const filteredMonsters = this.scene?.monsters.filter((monster) => {
+        return monster?.timestamp != target.timestamp;
+      }).map((monster) => {
+        return {
+          distance: getDistance({
+            x: monster.position.x + monster.width / 2, y: monster.position.y + monster.height / 2
+          }, {
+            x: this.position.x + this.width / 2, y: this.position.y + this.height / 2
+          }), ...monster
         }
+      });
+
+      const result = _.sortBy(filteredMonsters, 'distance');
+      const [mostNearMonster] = result;
+      if (mostNearMonster) {
+        this.velocity = getVelocity({x: this.position.x + this.width / 2, y: this.position.y + this.height / 2}, {x: mostNearMonster?.position.x + mostNearMonster?.width / 2, y: mostNearMonster?.position.y + mostNearMonster?.height / 2});
       }
     }
     if (target?.tags?.includes('Monster')) {
       this.attackedList.push(target.timestamp);
-      this.attacked++;
       target.onCollision(this);
       this.audioCollision.currentTime = 0;
       this.audioCollision.play();
@@ -135,6 +136,7 @@ export default class Shuriken extends GameObject {
 
       this.attackedList.push(this.timestamp);
       this.attacked++;
+      if (this.attacked >= 3) return this.scene.player.gameObjects.splice(index, 1);
     }
   }
 }
