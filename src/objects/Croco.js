@@ -1,4 +1,3 @@
-import { GameObject } from "./GameObject";
 import { MONSTER } from "../constants";
 import CrocoImage from "../../assets/monster/croco.sheet.png";
 import Rectangle from "./Rectangle";

@@ -15,12 +15,14 @@ import { Wall } from "../objects/Wall";
 export default class FirstScene extends Scene {
   constructor(context, canvas) {
     super(context, canvas);
+    //this.textLogsElement
     this.textObjects = [];
     this.monsters = [];
     this.elapsedTime = 0;
     this.generatedMonsters = 0;
     this.requestAnimations = {};
     this.resources = {};
+    console.log("?");
     this.init();
   }
 
@@ -37,24 +39,6 @@ export default class FirstScene extends Scene {
     });
     this.resources.background = new Image();
     this.resources.background.src = ErevBackground; //MapleBackground;
-    const generateMonster = () => {
-      if (
-        this.elapsedTime / (FPS * FPS) >= this.generatedMonsters &&
-        this.generatedMonsters <= 10
-      ) {
-        this.monsters.push(
-          new Mushroom(this, {
-            // x: parseInt(Math.random() * (CANVAS.WIDTH - MONSTER.MUSHROOM.WIDTH)),
-            // y: parseInt(Math.random() * (CANVAS.HEIGHT - MONSTER.MUSHROOM.HEIGHT)),
-            x: 300,
-            y: 100,
-          })
-        );
-        this.generatedMonsters++;
-      }
-      this.requestAnimations.roundOne = requestAnimationFrame(generateMonster);
-    };
-    generateMonster();
     // this.monsterGenerationRequestId = requestAnimationFrame(generateMonster);
 
     this.addEvents();
@@ -85,11 +69,39 @@ export default class FirstScene extends Scene {
       return new Rectangle(skillBox.x, skillBox.y, skillBox.width, skillBox.height, skillBox);
     });
 
+    const wallFrame = { width: 10, height: 10 };
+    this.defaultRect = {
+      x: 200,
+      y: 100,
+      width: wallFrame.width,
+      height: wallFrame.height,
+      direction: "bottom",
+    };
     const rects = [
-      { x: 300, y: 100, width: 50, height: 50, direction: "bottom" },
-      { x: 300, y: 550, width: 50, height: 50, direction: "right" },
-      { x: 950, y: 550, width: 50, height: 50, direction: "top" },
-      { x: 950, y: 100, width: 50, height: 50, direction: "left" },
+      this.defaultRect,
+      ...[
+        {
+          x: this.defaultRect.x,
+          y: CANVAS.HEIGHT - this.defaultRect.y,
+          width: wallFrame.width,
+          height: wallFrame.height,
+          direction: "right",
+        },
+        {
+          x: CANVAS.WIDTH - this.defaultRect.x,
+          y: CANVAS.HEIGHT - this.defaultRect.y,
+          width: wallFrame.width,
+          height: wallFrame.height,
+          direction: "top",
+        },
+        {
+          x: CANVAS.WIDTH - this.defaultRect.x,
+          y: this.defaultRect.y,
+          width: wallFrame.width,
+          height: wallFrame.height,
+          direction: "left",
+        },
+      ],
     ];
     this.walls = rects.map((rect) => {
       const wall = new Wall(this);
@@ -97,6 +109,25 @@ export default class FirstScene extends Scene {
       wall.setRect(rect);
       return wall;
     });
+
+    const generateMonster = () => {
+      if (
+        this.elapsedTime / (FPS * FPS) >= this.generatedMonsters &&
+        this.generatedMonsters <= 10
+      ) {
+        this.monsters.push(
+          new Mushroom(this, {
+            // x: parseInt(Math.random() * (CANVAS.WIDTH - MONSTER.MUSHROOM.WIDTH)),
+            // y: parseInt(Math.random() * (CANVAS.HEIGHT - MONSTER.MUSHROOM.HEIGHT)),
+            x: this.defaultRect.x,
+            y: this.defaultRect.y,
+          })
+        );
+        this.generatedMonsters++;
+      }
+      this.requestAnimations.roundOne = requestAnimationFrame(generateMonster);
+    };
+    generateMonster();
   }
 
   update() {
@@ -105,8 +136,8 @@ export default class FirstScene extends Scene {
         this.crocoIntervalId = setInterval(() => {
           this.monsters.push(
             new Croco(this, {
-              x: 300,
-              y: 100,
+              x: this.defaultRect.x,
+              y: this.defaultRect.y,
             })
           );
           this.generatedMonsters++;
@@ -131,6 +162,11 @@ export default class FirstScene extends Scene {
     this.drawElapsedTime();
     this.drawExpUI();
     this.mouse.clicked = { x: -99, y: -99 };
+  }
+
+  addLog(html) {
+    // this.textLogsElement.insertAdjacentHTML("beforeend", html);
+    console.log("addlog");
   }
 
   addEvents() {

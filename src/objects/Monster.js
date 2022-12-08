@@ -5,10 +5,11 @@ export class Monster extends GameObject {
   constructor(scene, position) {
     super(scene, position);
     this.initialize();
+    this.scene.addLog(`<div>몬스터(${this.constructor.name})(이/가) 생성되었습니다.</div>`);
   }
 
   initialize() {
-    this.speed = 5;
+    this.speed = 3;
     this.velocity = { x: 0, y: 0, degrees: 0 };
     this.hpBar = {
       rect: null,
