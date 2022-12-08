@@ -86,9 +86,7 @@ async function loadResources() {
     });
   });
 
-  const audios = await Promise.all(audioPromises);
-  const images = await Promise.all(imagePromises);
 
-  return [audios, images]
+  return Promise.all([...audioPromises, ...imagePromises]);
 
 }

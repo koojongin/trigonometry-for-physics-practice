@@ -2,10 +2,10 @@ import TextObject from "./TextObject";
 
 export default class DamageTextObject extends TextObject {
 
-  eliminationCount = 20
 
   constructor(scene, position) {
     super(scene, position || {x: 0, y: 0});
+    this.eliminationCount = 20;
   }
 
   update() {
@@ -13,12 +13,11 @@ export default class DamageTextObject extends TextObject {
       return;
     }
     this.context.save();
-    this.context.globalAlpha = 1 - ((this.eliminationCount*5) / 100);
+    this.context.globalAlpha = 1 - ((this.eliminationCount * 5) / 100);
     super.update();
     this.context.restore();
     this.position = {
-      x: this.position.x,
-      y: this.position.y - 1,
+      x: this.position.x, y: this.position.y - 1,
     };
     this.eliminationCount--;
   }

@@ -7,8 +7,10 @@ export class GameObject {
     this.timestamp = v4();//uuid
     this.scene = scene;
     this.position = position || {x: 0, y: 0};
-    // this.create();
+    this.create();
   }
+
+  create(){};
 
 
   setPosition(x, y) {
