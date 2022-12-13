@@ -1,10 +1,10 @@
 import { GameObject } from "./GameObject";
-import { MONSTER, SHURIKEN } from "../constants";
-import PlayerImage from "../../assets/player.sheet.png";
+import { MONSTER, SHURIKEN, TOWER } from "../constants";
+import TowerImage from "../../assets/tower.png";
 import Shuriken from "./Shuriken";
 import { LEVEL_UP_TABLE } from "./player/player.constant";
 
-export class Player extends GameObject {
+export class Tower extends GameObject {
   constructor(scene, position) {
     if (!scene) throw new Error(`not enough parmater 'scene'.`);
     super(scene, position);
@@ -12,13 +12,14 @@ export class Player extends GameObject {
     this.level = 1;
     this.gold = 0;
     this.exp = 0;
-    this.width = MONSTER.MUSHROOM.WIDTH;
-    this.height = MONSTER.MUSHROOM.HEIGHT;
+    this.width = TOWER.WIDTH / 2;
+    this.height = TOWER.HEIGHT / 2;
+    this.image = TowerImage;
     this.speed = 5;
     this.sheetOffset = [
-      [63 * 0, 0, 63, 56],
-      [63 * 1, 0, 63, 56],
-      [63 * 2, 0, 63, 56],
+      [this.width * 0, 0, this.width, this.height],
+      // [this.width * 1, 0, this.width, this.height],
+      // [this.width * 2, 0, this.width, this.height],
     ];
     this.spriteIndex = 0;
     this.animationBuffer = 25;
@@ -34,7 +35,7 @@ export class Player extends GameObject {
 
   create() {
     const sheet = new Image();
-    sheet.src = PlayerImage;
+    sheet.src = TowerImage;
     this.sheet = sheet;
     this.cooldowns = {
       shuriken: this.scene.shuriken.cooldown,
@@ -52,17 +53,22 @@ export class Player extends GameObject {
 
   update() {
     const { context } = this.scene;
+    context.save();
+    context.fillStyle = "rgb(255,255,255)";
+    context.fillRect(this.position.x, this.position.y, this.width, this.height);
     context.drawImage(
       this.sheet,
       this.sheetOffset[this.spriteIndex][0],
-      0,
-      this.width,
-      this.height,
+      this.sheetOffset[this.spriteIndex][1],
+      TOWER.WIDTH,
+      TOWER.HEIGHT,
       this.position.x,
       this.position.y,
       this.width,
       this.height
     );
+
+    context.restore();
 
     if (this.keyPressed.left) this.position.x -= this.speed;
     if (this.keyPressed.right) this.position.x += this.speed;

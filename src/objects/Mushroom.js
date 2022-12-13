@@ -41,6 +41,29 @@ export class Mushroom extends Monster {
     this.updateHPBar();
   }
 
+  updateAnimation() {
+    const { context } = this.scene;
+    context.drawImage(
+      this.sheet,
+      this.sheetOffset[this.spriteIndex][0],
+      0,
+      this.width,
+      this.height,
+      this.position.x,
+      this.position.y,
+      this.width,
+      this.height
+    );
+    this.animationBufferCount++;
+    if (this.animationBufferCount >= this.animationBuffer) {
+      this.spriteIndex++;
+      this.animationBufferCount = 0;
+    }
+    if (this.spriteIndex >= this.sheetOffset.length) {
+      this.spriteIndex = 0;
+    }
+  }
+
   onCollision(target) {
     if (target.tags.includes("Shuriken")) {
       this.hp -= target.damage;

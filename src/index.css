@@ -16,11 +16,12 @@ body {
     flex-direction: column;
 }
 
-#control{
+#control {
     display: flex;
     align-items: center;
     justify-content: center;
 }
+
 .wrapper {
     margin: auto;
     display: flex;
@@ -33,9 +34,11 @@ body {
 canvas {
 
 }
-.start-button:hover{
+
+.start-button:hover {
     background: #f8f8f8;
 }
+
 .start-button {
     border: solid 1px;
     position: absolute;
@@ -48,4 +51,24 @@ canvas {
     font-size: 40px;
     top: 0;
     z-index: 10;
+}
+
+.text-logs {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    width: 100%;
+    max-height: 200px;
+    min-height: 200px;
+    overflow: scroll;
+}
+
+.text-logs .log-monster-created {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+}
+
+.text-logs .log-monster-created .timestamp {
+    margin-right: 5px;
 }

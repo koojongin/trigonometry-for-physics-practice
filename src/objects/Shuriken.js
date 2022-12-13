@@ -20,11 +20,15 @@ export default class Shuriken extends GameObject {
     this.damage = 1;
     this.width = SHURIKEN.WIDTH;
     this.height = SHURIKEN.HEIGHT;
-    this.tags = ["Shuriken"];
+    this.tags = ["Missile", "Shuriken"];
     this.attacked = 0;
     this.attackedList = [];
-    this.range = 300;
+    this.range = 100;
     this.movedDistance = 0;
+  }
+
+  setParent(target) {
+    this.parent = target;
   }
 
   create() {
@@ -60,11 +64,9 @@ export default class Shuriken extends GameObject {
     this.rect = new Rectangle(this.position.x, this.position.y, this.width, this.height);
     const isOveredFromCanvas = !this.rect.intersect(this.canvasRect);
     if (isOveredFromCanvas) {
-      const index = this.scene.player.gameObjects.findIndex(
-        (object) => object.timestamp == this.timestamp
-      );
+      const index = this.scene.missiles.findIndex((object) => object.timestamp == this.timestamp);
       if (index >= 0) {
-        this.scene.player.gameObjects.splice(index, 1);
+        this.scene.missiles.splice(index, 1);
       }
       // console.log(scene.player.gameObjects.filter(object => object.tag == 'Shuriken').length)
       return;
@@ -103,19 +105,15 @@ export default class Shuriken extends GameObject {
   }
 
   destroy() {
-    const index = this.scene.player.gameObjects.findIndex(
-      (object) => object.timestamp == this.timestamp
-    );
+    const index = this.scene.missiles.findIndex((object) => object.timestamp == this.timestamp);
     if (index >= 0) {
-      this.scene.player.gameObjects.splice(index, 1);
+      this.scene.missiles.splice(index, 1);
     }
   }
 
   onCollision(target) {
     if (this.attackedList.includes(target.timestamp)) return;
-    const index = this.scene.player.gameObjects.findIndex(
-      (object) => object.timestamp == this.timestamp
-    );
+    const index = this.scene.missiles.findIndex((object) => object.timestamp == this.timestamp);
     if (index >= 0) {
       const filteredMonsters = this.scene?.monsters
         .filter((monster) => {
@@ -163,7 +161,9 @@ export default class Shuriken extends GameObject {
       this.drawDamage(target, this.damage);
       this.attackedList.push(this.timestamp);
       this.attacked++;
-      if (this.attacked >= 3) return this.scene.player.gameObjects.splice(index, 1);
+      if (this.attacked >= 3) {
+        return this.scene.missiles.splice(index, 1);
+      }
     }
   }
 

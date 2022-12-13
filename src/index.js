@@ -3,6 +3,7 @@ import { BOX, CANVAS, FPS } from "./constants";
 import MushRoomImage from "/assets/monster/mushroom.sheet.png";
 import ErevBackground from "/assets/erev-background.png";
 import ShurikenImage from "/assets/shuriken.png";
+import TowerImage from "/assets/tower.png";
 import MapleBackground from "../assets/maple-background.png";
 import ThrowShurikenAudio from "../assets/audio/throw-shuriken.ogg";
 import CollisionShurikenAudio from "../assets/audio/collision-shuriken.ogg";
@@ -45,9 +46,9 @@ async function onload() {
   const Resources = await loadResources();
 
   function start() {
-    const firstScene = new FirstScene(context, canvasElement);
-    console.log(textLogsElement);
-    firstScene.textLogsElement = textLogsElement;
+    const firstScene = new FirstScene(context, canvasElement, {
+      textLogsElement,
+    });
     const callback = () =>
       requestAnimationFrame(() => {
         context.clearRect(0, 0, CANVAS.WIDTH, CANVAS.HEIGHT);
@@ -62,6 +63,7 @@ async function onload() {
 async function loadResources() {
   const imagePaths = [
     MushRoomImage,
+    TowerImage,
     ErevBackground,
     ShurikenImage,
     MapleBackground,

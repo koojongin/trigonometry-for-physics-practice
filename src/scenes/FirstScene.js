@@ -2,7 +2,7 @@ import "/src/index.css";
 import Scene from "./Scene";
 import ErevBGM from "/assets/audio/erev.ogg";
 import ErevBackground from "/assets/erev-background.png";
-import { CANVAS, FONT_FAMILY, FPS, MONSTER } from "../constants";
+import { CANVAS, CANVAS, FONT_FAMILY, FPS, GRID_BOX, MONSTER, TOWER } from "../constants";
 import { Mushroom } from "../objects/Mushroom";
 import { Player } from "../objects/Player";
 import Rectangle from "../objects/Rectangle";
@@ -11,68 +11,51 @@ import TextObject from "../objects/TextObject";
 import { getElapsedTime, toHHMMSS } from "../util";
 import { Croco } from "../objects/Croco";
 import { Wall } from "../objects/Wall";
+import TowerImage from "../../assets/tower.png";
+import { Tower } from "../objects/Tower";
 
 export default class FirstScene extends Scene {
-  constructor(context, canvas) {
+  constructor(context, canvas, options) {
     super(context, canvas);
-    //this.textLogsElement
+    Object.assign(this, options);
     this.textObjects = [];
     this.monsters = [];
     this.elapsedTime = 0;
     this.generatedMonsters = 0;
     this.requestAnimations = {};
     this.resources = {};
-    console.log("?");
     this.init();
   }
 
   init() {
-    const audio = new Audio(ErevBGM);
-    audio.volume = 0.2;
-    audio.loop = true;
-    audio.play();
-    this.timerText = new TextObject(this);
+    this.initBackground();
+    this.towerBox = {
+      width: GRID_BOX.WIDTH,
+      height: GRID_BOX.HEIGHT,
+      // startX: 205,
+      // startY: 105,
+      startX: 0,
+      startY: 0,
+    };
+    this.missiles = [];
     this.shuriken = new Shuriken(this, { x: -1000, y: 0 });
     this.player = new Player(this, {
       x: parseInt(CANVAS.WIDTH / 2 - MONSTER.MUSHROOM.WIDTH / 2),
       y: parseInt(CANVAS.HEIGHT / 2 - MONSTER.MUSHROOM.HEIGHT / 2),
     });
-    this.resources.background = new Image();
-    this.resources.background.src = ErevBackground; //MapleBackground;
-    // this.monsterGenerationRequestId = requestAnimationFrame(generateMonster);
+    this.towers = [];
 
-    this.addEvents();
-    const skillBox = { width: 50, height: 50 };
-    const margin = { left: 5, top: 5 };
-    this.skills = [
-      { width: 50, height: 50, x: 0 * skillBox.width, y: 0, text: "강화" },
-      { width: 50, height: 50, x: 1 * skillBox.width, y: 0, text: "럭키세븐" },
-      {
-        width: 50,
-        height: 50,
-        x: 2 * skillBox.width,
-        y: 0,
-        text: "트리플스로우",
-      },
-      { width: 50, height: 50, x: 3 * skillBox.width, y: 0, text: "쿨감" },
-      {
-        width: 50,
-        height: 50,
-        x: 4 * skillBox.width,
-        y: 0,
-        text: "사거리",
-      },
-    ].map((skillBox, index) => {
-      const { x, y } = skillBox;
-      skillBox.x = x + margin.left * (index + 1);
-      skillBox.y = y + margin.top;
-      return new Rectangle(skillBox.x, skillBox.y, skillBox.width, skillBox.height, skillBox);
-    });
+    this.initTower();
+    this.initSkillUI();
+    this.initWalls();
+    this.batchMonsters();
+  }
 
+  initWalls() {
     const wallFrame = { width: 10, height: 10 };
     this.defaultRect = {
       x: 200,
-      y: 100,
+      y: 80,
       width: wallFrame.width,
       height: wallFrame.height,
       direction: "bottom",
@@ -109,25 +92,62 @@ export default class FirstScene extends Scene {
       wall.setRect(rect);
       return wall;
     });
+  }
 
-    const generateMonster = () => {
-      if (
-        this.elapsedTime / (FPS * FPS) >= this.generatedMonsters &&
-        this.generatedMonsters <= 10
-      ) {
-        this.monsters.push(
-          new Mushroom(this, {
-            // x: parseInt(Math.random() * (CANVAS.WIDTH - MONSTER.MUSHROOM.WIDTH)),
-            // y: parseInt(Math.random() * (CANVAS.HEIGHT - MONSTER.MUSHROOM.HEIGHT)),
-            x: this.defaultRect.x,
-            y: this.defaultRect.y,
-          })
-        );
-        this.generatedMonsters++;
-      }
-      this.requestAnimations.roundOne = requestAnimationFrame(generateMonster);
+  initSkillUI() {
+    const skillBox = { width: 50, height: 50 };
+    const margin = { left: 5, top: 5 };
+    this.skills = [
+      { width: 50, height: 50, x: 0 * skillBox.width, y: 0, text: "강화" },
+      { width: 50, height: 50, x: 1 * skillBox.width, y: 0, text: "럭키세븐" },
+      {
+        width: 50,
+        height: 50,
+        x: 2 * skillBox.width,
+        y: 0,
+        text: "트리플스로우",
+      },
+      { width: 50, height: 50, x: 3 * skillBox.width, y: 0, text: "쿨감" },
+      {
+        width: 50,
+        height: 50,
+        x: 4 * skillBox.width,
+        y: 0,
+        text: "사거리",
+      },
+    ].map((skillBox, index) => {
+      const { x, y } = skillBox;
+      skillBox.x = x + margin.left * (index + 1);
+      skillBox.y = y + margin.top;
+      return new Rectangle(skillBox.x, skillBox.y, skillBox.width, skillBox.height, skillBox);
+    });
+  }
+
+  initBackground() {
+    const audio = new Audio(ErevBGM);
+    audio.volume = 0.2;
+    audio.loop = true;
+    audio.play().then();
+    this.timerText = new TextObject(this);
+    this.resources.background = new Image();
+    this.resources.background.src = ErevBackground; //MapleBackground;
+    this.addEvents();
+  }
+
+  initTower() {
+    const width = TOWER.WIDTH / 2;
+    const height = TOWER.HEIGHT / 2;
+    this.tower = {
+      width,
+      height,
+      image: new Image(),
+      sheetOffset: [
+        [TOWER.WIDTH * 0, 0, TOWER.WIDTH, TOWER.HEIGHT],
+        [TOWER.WIDTH * 1, 0, TOWER.WIDTH, TOWER.HEIGHT],
+        [TOWER.WIDTH * 2, 0, TOWER.WIDTH, TOWER.HEIGHT],
+      ],
     };
-    generateMonster();
+    this.tower.image.src = TowerImage;
   }
 
   update() {
@@ -149,32 +169,110 @@ export default class FirstScene extends Scene {
 
     this.drawBackground();
     this.drawStageFloor();
-
     this.gameObjects = [
       ...this.monsters,
       this.player,
-      ...this.player.gameObjects,
+      ...this.towers,
+      ...this.missiles,
       ...this.textObjects,
     ];
     this.updateGameObjects(this.gameObjects);
-
+    this.drawBatchGrid();
+    this.drawBatchMouseCursor();
     this.drawSkillUI();
     this.drawElapsedTime();
     this.drawExpUI();
+    this.drawTower();
+    if (this.mouse.isClicked) this.onClick(this.mouse.clicked);
     this.mouse.clicked = { x: -99, y: -99 };
+    this.mouse.isClicked = false;
   }
 
-  addLog(html) {
-    // this.textLogsElement.insertAdjacentHTML("beforeend", html);
-    console.log("addlog");
+  onClick(clickedPosition) {
+    const { x, y } = clickedPosition;
+    const tower = new Tower(this, { x, y });
+    tower.setPosition(x - tower.width / 2, y - tower.height / 2);
+    this.towers.push(tower);
+  }
+
+  drawTower() {}
+
+  drawBatchMouseCursor() {
+    const { image, sheetOffset, width, height } = this.tower;
+    const [selectedSprite] = sheetOffset;
+    this.context.save();
+
+    this.context.beginPath();
+    const radius = (Shuriken.moreRange || 0) + this.shuriken.range;
+    this.context.arc(this.mouse.position.x, this.mouse.position.y, radius, 0, 2 * Math.PI);
+    this.context.fillStyle = "rgba(255,255,255,0.29)";
+    this.context.fill();
+    this.context.stroke();
+
+    this.context.fillStyle = "#94f582";
+    this.context.fillRect(
+      this.mouse.position.x - width / 2,
+      this.mouse.position.y - height / 2,
+      width,
+      height
+    );
+    this.context.globalAlpha = 0.5;
+    this.context.drawImage(
+      image,
+      selectedSprite[0],
+      selectedSprite[1],
+      width * 2,
+      height * 2,
+      this.mouse.position.x - width / 2,
+      this.mouse.position.y - height / 2,
+      width,
+      height
+    );
+    this.context.restore();
+    // this.context.drawImage(this.player);
+  }
+
+  batchMonsters() {
+    const generateMonster = () => {
+      if (
+        this.elapsedTime / (FPS * FPS) >= this.generatedMonsters &&
+        this.generatedMonsters <= 10
+      ) {
+        this.monsters.push(
+          new Mushroom(this, {
+            // x: parseInt(Math.random() * (CANVAS.WIDTH - MONSTER.MUSHROOM.WIDTH)),
+            // y: parseInt(Math.random() * (CANVAS.HEIGHT - MONSTER.MUSHROOM.HEIGHT)),
+            x: this.defaultRect.x,
+            y: this.defaultRect.y,
+          })
+        );
+        this.generatedMonsters++;
+      }
+      this.requestAnimations.roundOne = requestAnimationFrame(generateMonster);
+    };
+    generateMonster();
+  }
+
+  drawBatchGrid() {
+    // this.context
+    const { width, height, startX, startY } = this.towerBox;
+    const boxHorizontalLength = parseInt(CANVAS.WIDTH / width);
+    const boxVerticalLength = parseInt(CANVAS.HEIGHT / height);
+    new Array(boxHorizontalLength).fill(1).forEach((value, xIndex) => {
+      new Array(boxVerticalLength).fill(1).forEach((value, yIndex) => {
+        this.context.strokeRect(width * xIndex + startX, height * yIndex + startY, width, height);
+      });
+    });
   }
 
   addEvents() {
+    this.mouse.isClicked = false;
     this.canvas.addEventListener("mousemove", (e) => {
       this.mouse.position = this.getMousePos(e);
     });
     this.canvas.addEventListener("mouseup", (e) => {
       this.mouse.clicked = this.getMousePos(e);
+      this.mouse.isClicked = true;
     });
     window.addEventListener("keydown", (e) => {
       const { key } = e;
@@ -310,7 +408,7 @@ export default class FirstScene extends Scene {
         }
 
         if (selectedSkillBox.text.indexOf("사거리") >= 0) {
-          if (!Shuriken.moreRange) Shuriken.moreRange = 20 * 100;
+          if (!Shuriken.moreRange) Shuriken.moreRange = 0;
           const addRange = 20;
           Shuriken.moreRange += addRange;
           selectedSkillBox.text = `사거리${Shuriken.moreRange / addRange}`;

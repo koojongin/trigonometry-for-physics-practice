@@ -5,7 +5,7 @@ export class Monster extends GameObject {
   constructor(scene, position) {
     super(scene, position);
     this.initialize();
-    this.scene.addLog(`<div>몬스터(${this.constructor.name})(이/가) 생성되었습니다.</div>`);
+    // this.scene.addLog(`몬스터(${this.constructor.name})(이/가) 생성되었습니다.`);
   }
 
   initialize() {
