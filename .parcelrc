@@ -1,6 +1,6 @@
 {
   "extends": "@parcel/config-default",
   "transformers": {
-    "*.{zip,tgz,ogg,png}": ["@parcel/transformer-raw"]
+    "*.{zip,tgz,ogg,png,wav,mp3}": ["@parcel/transformer-raw"]
   }
 }

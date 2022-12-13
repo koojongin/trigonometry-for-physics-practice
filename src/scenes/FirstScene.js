@@ -1,8 +1,8 @@
 import "/src/index.css";
 import Scene from "./Scene";
-import ErevBGM from "/assets/audio/erev.ogg";
-import ErevBackground from "/assets/erev-background.png";
-import { CANVAS, CANVAS, FONT_FAMILY, FPS, GRID_BOX, MONSTER, TOWER } from "../constants";
+import BackgroundBGM from "/assets/audio/background.mp3";
+import SkyBackground from "/assets/sky_background.png";
+import { CANVAS, FONT_FAMILY, FPS, GRID_BOX, MONSTER } from "../constants";
 import { Mushroom } from "../objects/Mushroom";
 import { Player } from "../objects/Player";
 import Rectangle from "../objects/Rectangle";
@@ -11,7 +11,6 @@ import TextObject from "../objects/TextObject";
 import { getElapsedTime, toHHMMSS } from "../util";
 import { Croco } from "../objects/Croco";
 import { Wall } from "../objects/Wall";
-import TowerImage from "../../assets/tower.png";
 import { Tower } from "../objects/Tower";
 
 export default class FirstScene extends Scene {
@@ -124,30 +123,18 @@ export default class FirstScene extends Scene {
   }
 
   initBackground() {
-    const audio = new Audio(ErevBGM);
-    audio.volume = 0.2;
+    const audio = new Audio(BackgroundBGM);
+    audio.volume = 0.5;
     audio.loop = true;
     audio.play().then();
     this.timerText = new TextObject(this);
     this.resources.background = new Image();
-    this.resources.background.src = ErevBackground; //MapleBackground;
+    this.resources.background.src = SkyBackground; //MapleBackground;
     this.addEvents();
   }
 
   initTower() {
-    const width = TOWER.WIDTH / 2;
-    const height = TOWER.HEIGHT / 2;
-    this.tower = {
-      width,
-      height,
-      image: new Image(),
-      sheetOffset: [
-        [TOWER.WIDTH * 0, 0, TOWER.WIDTH, TOWER.HEIGHT],
-        [TOWER.WIDTH * 1, 0, TOWER.WIDTH, TOWER.HEIGHT],
-        [TOWER.WIDTH * 2, 0, TOWER.WIDTH, TOWER.HEIGHT],
-      ],
-    };
-    this.tower.image.src = TowerImage;
+    this.tower = new Tower(this, { x: 0, y: 0 });
   }
 
   update() {
@@ -199,9 +186,8 @@ export default class FirstScene extends Scene {
 
   drawBatchMouseCursor() {
     const { image, sheetOffset, width, height } = this.tower;
-    const [selectedSprite] = sheetOffset;
-    this.context.save();
 
+    this.context.save();
     this.context.beginPath();
     const radius = (Shuriken.moreRange || 0) + this.shuriken.range;
     this.context.arc(this.mouse.position.x, this.mouse.position.y, radius, 0, 2 * Math.PI);
@@ -217,18 +203,12 @@ export default class FirstScene extends Scene {
       height
     );
     this.context.globalAlpha = 0.5;
-    this.context.drawImage(
-      image,
-      selectedSprite[0],
-      selectedSprite[1],
-      width * 2,
-      height * 2,
-      this.mouse.position.x - width / 2,
-      this.mouse.position.y - height / 2,
-      width,
-      height
-    );
     this.context.restore();
+    this.tower.position = {
+      x: this.mouse.position.x - width / 2,
+      y: this.mouse.position.y - height / 2,
+    };
+    this.tower.update();
     // this.context.drawImage(this.player);
   }
 
@@ -258,11 +238,14 @@ export default class FirstScene extends Scene {
     const { width, height, startX, startY } = this.towerBox;
     const boxHorizontalLength = parseInt(CANVAS.WIDTH / width);
     const boxVerticalLength = parseInt(CANVAS.HEIGHT / height);
+    this.context.save();
+    this.context.strokeStyle = "rgba(0,0,0,0.07)";
     new Array(boxHorizontalLength).fill(1).forEach((value, xIndex) => {
       new Array(boxVerticalLength).fill(1).forEach((value, yIndex) => {
         this.context.strokeRect(width * xIndex + startX, height * yIndex + startY, width, height);
       });
     });
+    this.context.restore();
   }
 
   addEvents() {
@@ -300,7 +283,7 @@ export default class FirstScene extends Scene {
   }
 
   drawBackground() {
-    this.context.globalAlpha = 0.5;
+    // this.context.globalAlpha = 0.5;
     this.context.drawImage(this.resources.background, 0, 0, CANVAS.WIDTH, CANVAS.HEIGHT);
     this.context.globalAlpha = 1;
     this.context.fillStyle = "#b72424";

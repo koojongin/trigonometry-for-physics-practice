@@ -5,8 +5,10 @@ import ErevBackground from "/assets/erev-background.png";
 import ShurikenImage from "/assets/shuriken.png";
 import TowerImage from "/assets/tower.png";
 import MapleBackground from "../assets/maple-background.png";
-import ThrowShurikenAudio from "../assets/audio/throw-shuriken.ogg";
-import CollisionShurikenAudio from "../assets/audio/collision-shuriken.ogg";
+import SkyBackground from "../assets/sky_background.png";
+import ThrowShurikenAudio from "../assets/audio/throw-shuriken.wav";
+import WitchImage from "../assets/witch.sheet.png";
+import CollisionShurikenAudio from "../assets/audio/collision-shuriken.wav";
 import ErevBGM from "../assets/audio/erev.ogg";
 
 document.addEventListener("DOMContentLoaded", onload);
@@ -21,7 +23,6 @@ async function onload() {
     startButtonElement.remove();
     start();
   };
-  startButtonElement.addEventListener("click", clickEventHandler);
   const context = canvasElement.getContext("2d");
 
   const boxes = Array.from(new Array(CANVAS.WIDTH / BOX.WIDTH), (value, xIndex) => {
@@ -44,6 +45,7 @@ async function onload() {
     });
 
   const Resources = await loadResources();
+  startButtonElement.addEventListener("click", clickEventHandler);
 
   function start() {
     const firstScene = new FirstScene(context, canvasElement, {
@@ -62,8 +64,10 @@ async function onload() {
 
 async function loadResources() {
   const imagePaths = [
+    SkyBackground,
     MushRoomImage,
     TowerImage,
+    WitchImage,
     ErevBackground,
     ShurikenImage,
     MapleBackground,

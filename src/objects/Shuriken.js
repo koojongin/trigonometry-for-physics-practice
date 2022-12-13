@@ -4,8 +4,8 @@ import ShurikenImage from "../../assets/shuriken.png";
 import { getDistance, getVelocity } from "./Pyhsics";
 import Rectangle from "./Rectangle";
 import DamageTextObject from "./DamageTextObject";
-import ThrowShurikenAudio from "../../assets/audio/throw-shuriken.ogg";
-import CollisionShurikenAudio from "../../assets/audio/collision-shuriken.ogg";
+import ThrowShurikenAudio from "../../assets/audio/throw-shuriken.wav";
+import CollisionShurikenAudio from "../../assets/audio/collision-shuriken.wav";
 import _ from "../../lib/lodash.core";
 
 export default class Shuriken extends GameObject {

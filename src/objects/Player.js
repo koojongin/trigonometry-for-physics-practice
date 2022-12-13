@@ -1,6 +1,6 @@
 import { GameObject } from "./GameObject";
-import { MONSTER, SHURIKEN } from "../constants";
-import PlayerImage from "../../assets/player.sheet.png";
+import { MONSTER, SHURIKEN, SPRITE } from "../constants";
+import WitchImage from "../../assets/witch.sheet.png";
 import Shuriken from "./Shuriken";
 import { LEVEL_UP_TABLE } from "./player/player.constant";
 
@@ -12,13 +12,15 @@ export class Player extends GameObject {
     this.level = 1;
     this.gold = 0;
     this.exp = 0;
-    this.width = MONSTER.MUSHROOM.WIDTH;
-    this.height = MONSTER.MUSHROOM.HEIGHT;
+    this.width = SPRITE.WITCH.WIDTH;
+    this.height = SPRITE.WITCH.HEIGHT;
     this.speed = 5;
     this.sheetOffset = [
-      [63 * 0, 0, 63, 56],
-      [63 * 1, 0, 63, 56],
-      [63 * 2, 0, 63, 56],
+      [34 * 0, 0, 34, 34],
+      [34 * 1, 0, 34, 34],
+      [34 * 2, 0, 34, 34],
+      [34 * 3, 0, 34, 34],
+      [34 * 4, 0, 34, 34],
     ];
     this.spriteIndex = 0;
     this.animationBuffer = 25;
@@ -34,7 +36,7 @@ export class Player extends GameObject {
 
   create() {
     const sheet = new Image();
-    sheet.src = PlayerImage;
+    sheet.src = WitchImage;
     this.sheet = sheet;
     this.cooldowns = {
       shuriken: this.scene.shuriken.cooldown,

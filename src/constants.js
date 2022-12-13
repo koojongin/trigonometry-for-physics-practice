@@ -14,7 +14,10 @@ export const MONSTER = {
   CROCO: { WIDTH: 91, HEIGHT: 29 },
 };
 
-export const TOWER = { WIDTH: 80, HEIGHT: 80 };
+export const SPRITE = {
+  WITCH: { WIDTH: 34, HEIGHT: 34 },
+};
+export const TOWER = { WIDTH: 50, HEIGHT: 50 };
 
 export const TO_RADIANS = Math.PI / 180;
 export const SHURIKEN = { WIDTH: 48, HEIGHT: 9 };

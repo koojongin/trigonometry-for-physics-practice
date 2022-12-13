@@ -1,5 +1,5 @@
 import { GameObject } from "./GameObject";
-import { MONSTER, SHURIKEN, TOWER } from "../constants";
+import { GRID_BOX, MONSTER, SHURIKEN, TOWER } from "../constants";
 import TowerImage from "../../assets/tower.png";
 import Shuriken from "./Shuriken";
 import { LEVEL_UP_TABLE } from "./player/player.constant";
@@ -12,9 +12,10 @@ export class Tower extends GameObject {
     this.level = 1;
     this.gold = 0;
     this.exp = 0;
-    this.width = TOWER.WIDTH / 2;
-    this.height = TOWER.HEIGHT / 2;
-    this.image = TowerImage;
+    this.width = GRID_BOX.WIDTH;
+    this.height = GRID_BOX.HEIGHT;
+    this.image = new Image();
+    this.image.src = TowerImage;
     this.speed = 5;
     this.sheetOffset = [
       [this.width * 0, 0, this.width, this.height],
@@ -54,8 +55,8 @@ export class Tower extends GameObject {
   update() {
     const { context } = this.scene;
     context.save();
-    context.fillStyle = "rgb(255,255,255)";
-    context.fillRect(this.position.x, this.position.y, this.width, this.height);
+    // context.fillStyle = "rgb(255,255,255)";
+    // context.fillRect(this.position.x, this.position.y, this.width, this.height);
     context.drawImage(
       this.sheet,
       this.sheetOffset[this.spriteIndex][0],
@@ -69,11 +70,6 @@ export class Tower extends GameObject {
     );
 
     context.restore();
-
-    if (this.keyPressed.left) this.position.x -= this.speed;
-    if (this.keyPressed.right) this.position.x += this.speed;
-    if (this.keyPressed.up) this.position.y -= this.speed;
-    if (this.keyPressed.down) this.position.y += this.speed;
 
     this.animationBufferCount++;
     if (this.animationBufferCount >= this.animationBuffer) {
