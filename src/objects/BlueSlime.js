@@ -3,7 +3,7 @@ import MushRoomImage from "../../assets/monster/mushroom.sheet.png";
 import Rectangle from "./Rectangle";
 import { Monster } from "./Monster";
 
-export class Mushroom extends Monster {
+export class BlueSlime extends Monster {
   constructor(scene, position) {
     if (!scene) throw new Error("not enough parmater 'scene'.");
     super(scene, position);

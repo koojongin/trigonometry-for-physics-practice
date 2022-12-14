@@ -10,6 +10,7 @@ import ThrowShurikenAudio from "../assets/audio/throw-shuriken.wav";
 import WitchImage from "../assets/witch.sheet.png";
 import CollisionShurikenAudio from "../assets/audio/collision-shuriken.wav";
 import ErevBGM from "../assets/audio/erev.ogg";
+import * as fs from "fs";
 
 document.addEventListener("DOMContentLoaded", onload);
 
@@ -43,6 +44,13 @@ async function onload() {
       }
       context.fillRect(box.x, box.y, 20, 20);
     });
+
+  const getAssetFilePaths = () => {
+    // console.log(fs);
+    // var files = fs.readdirSync("/assets/monster/");
+    // console.log(files);
+  };
+  getAssetFilePaths();
 
   const Resources = await loadResources();
   startButtonElement.addEventListener("click", clickEventHandler);

@@ -3,7 +3,6 @@
   "browserslist": "> 0.5%, last 2 versions, not dead",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
   "scripts": {
     "start": "parcel index.html",
     "build": "parcel build index.html",
@@ -13,7 +12,9 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@swc/helpers": "^0.4.14",
     "date-fns": "^2.29.3",
+    "electron": "^22.0.0",
     "src": "^1.1.2",
     "uuid": "^9.0.0"
   },

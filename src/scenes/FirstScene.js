@@ -3,7 +3,7 @@ import Scene from "./Scene";
 import BackgroundBGM from "/assets/audio/background.mp3";
 import SkyBackground from "/assets/sky_background.png";
 import { CANVAS, FONT_FAMILY, FPS, GRID_BOX, MONSTER } from "../constants";
-import { Mushroom } from "../objects/Mushroom";
+import { BlueSlime } from "../objects/BlueSlime";
 import { Player } from "../objects/Player";
 import Rectangle from "../objects/Rectangle";
 import Shuriken from "../objects/Shuriken";
@@ -219,7 +219,7 @@ export default class FirstScene extends Scene {
         this.generatedMonsters <= 10
       ) {
         this.monsters.push(
-          new Mushroom(this, {
+          new BlueSlime(this, {
             // x: parseInt(Math.random() * (CANVAS.WIDTH - MONSTER.MUSHROOM.WIDTH)),
             // y: parseInt(Math.random() * (CANVAS.HEIGHT - MONSTER.MUSHROOM.HEIGHT)),
             x: this.defaultRect.x,
