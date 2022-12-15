@@ -46,10 +46,9 @@ export default class Scene {
           }
         }
       }
-      if (object.isDead) {
-        console.log("?");
-        objects.splice(index, 1);
-      }
+      // if (object.isDead) {
+      //   objects.splice(index, 1);
+      // }
       object.update();
     });
   }

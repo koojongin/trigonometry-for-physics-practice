@@ -1,21 +1,18 @@
 import FirstScene from "./scenes/FirstScene";
-import { BOX, CANVAS, FPS } from "./constants";
-import MushRoomImage from "/assets/monster/mushroom.sheet.png";
-import ErevBackground from "/assets/erev-background.png";
-import ShurikenImage from "/assets/shuriken.png";
-import TowerImage from "/assets/tower.png";
-import MapleBackground from "../assets/maple-background.png";
-import SkyBackground from "../assets/sky_background.png";
+import { BOX, CANVAS, getAssetImagePaths } from "./constants";
 import ThrowShurikenAudio from "../assets/audio/throw-shuriken.wav";
-import WitchImage from "../assets/witch.sheet.png";
 import CollisionShurikenAudio from "../assets/audio/collision-shuriken.wav";
 import ErevBGM from "../assets/audio/erev.ogg";
-import * as fs from "fs";
 
 document.addEventListener("DOMContentLoaded", onload);
+global.RESOURCE = { IMAGE: {}, AUDIO: {} };
 
 async function onload() {
   const canvasElement = document.querySelector("canvas");
+  canvasElement.addEventListener("contextmenu", (event) => {
+    event.preventDefault();
+    event.stopPropagation();
+  });
   const startButtonElement = document.querySelector(".start-button");
   const textLogsElement = document.querySelector(".text-logs");
 
@@ -45,13 +42,6 @@ async function onload() {
       context.fillRect(box.x, box.y, 20, 20);
     });
 
-  const getAssetFilePaths = () => {
-    // console.log(fs);
-    // var files = fs.readdirSync("/assets/monster/");
-    // console.log(files);
-  };
-  getAssetFilePaths();
-
   const Resources = await loadResources();
   startButtonElement.addEventListener("click", clickEventHandler);
 
@@ -71,16 +61,7 @@ async function onload() {
 }
 
 async function loadResources() {
-  const imagePaths = [
-    SkyBackground,
-    MushRoomImage,
-    TowerImage,
-    WitchImage,
-    ErevBackground,
-    ShurikenImage,
-    MapleBackground,
-    MapleBackground,
-  ];
+  const imagePaths = getAssetImagePaths();
 
   const audioPaths = [ThrowShurikenAudio, CollisionShurikenAudio, ErevBGM];
 
@@ -98,6 +79,7 @@ async function loadResources() {
     return new Promise((resolve, reject) => {
       image.onload = () => {
         resolve(image);
+        global.RESOURCE.IMAGE[imagePath] = image;
       };
     });
   });

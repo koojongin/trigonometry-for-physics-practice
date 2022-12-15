@@ -9,7 +9,7 @@ import Rectangle from "../objects/Rectangle";
 import Shuriken from "../objects/Shuriken";
 import TextObject from "../objects/TextObject";
 import { getElapsedTime, toHHMMSS } from "../util";
-import { Croco } from "../objects/Croco";
+import { PinkSlime } from "../objects/PinkSlime";
 import { Wall } from "../objects/Wall";
 import { Tower } from "../objects/Tower";
 
@@ -138,17 +138,17 @@ export default class FirstScene extends Scene {
   }
 
   update() {
-    if (this.generatedMonsters == 10) {
+    if (this.generatedMonsters == 1) {
       if (!this.crocoIntervalId) {
         this.crocoIntervalId = setInterval(() => {
           this.monsters.push(
-            new Croco(this, {
+            new PinkSlime(this, {
               x: this.defaultRect.x,
               y: this.defaultRect.y,
             })
           );
           this.generatedMonsters++;
-        }, 1000);
+        }, 200);
       }
     }
 
@@ -208,7 +208,7 @@ export default class FirstScene extends Scene {
       x: this.mouse.position.x - width / 2,
       y: this.mouse.position.y - height / 2,
     };
-    this.tower.update();
+    this.tower.updateDrawPosition();
     // this.context.drawImage(this.player);
   }
 

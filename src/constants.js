@@ -1,3 +1,5 @@
+import * as imageAssets from "../assets/**/**.png";
+
 /***
  * Constants
  */
@@ -21,3 +23,22 @@ export const TOWER = { WIDTH: 50, HEIGHT: 50 };
 
 export const TO_RADIANS = Math.PI / 180;
 export const SHURIKEN = { WIDTH: 48, HEIGHT: 9 };
+
+export const getAssetImagePaths = () => {
+  const imagePaths = Object.values(imageAssets)
+    .map((value) => {
+      const valueType = typeof value;
+      if (valueType == "string") {
+        return [value];
+      }
+
+      if (valueType == "object") {
+        return Object.values(value).map((nestedValue) => {
+          return nestedValue;
+        });
+      }
+    })
+    .flat();
+
+  return imagePaths;
+};

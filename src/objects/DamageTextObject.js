@@ -13,7 +13,7 @@ export default class DamageTextObject extends TextObject {
       return;
     }
     this.context.save();
-    this.context.globalAlpha = 1 - ((this.eliminationCount * 5) / 100);
+    // this.context.globalAlpha = 1 - ((this.eliminationCount * 5) / 100);
     super.update();
     this.context.restore();
     this.position = {

@@ -1,8 +1,9 @@
+import { MONSTER } from "../constants";
 import Rectangle from "./Rectangle";
 import { Monster } from "./Monster";
-import MonsterSprite from "../../assets/monster/blue_slime.sheet.png";
+import MonsterSprite from "../../assets/monster/pink_slime.sheet.png";
 
-export class BlueSlime extends Monster {
+export class PinkSlime extends Monster {
   constructor(scene, position) {
     if (!scene) throw new Error("not enough parmater 'scene'.");
     super(scene, position);
@@ -10,8 +11,10 @@ export class BlueSlime extends Monster {
     this.create();
   }
 
-  async init() {
-    this.exp = 1;
+  init() {
+    this.width = MONSTER.CROCO.WIDTH;
+    this.height = MONSTER.CROCO.HEIGHT;
+    this.exp = 2;
     this.sheetSpritesLength = 5;
     this.sheet = global.RESOURCE.IMAGE[MonsterSprite];
     this.width = 40;
@@ -28,9 +31,9 @@ export class BlueSlime extends Monster {
       [this.origin.width * 4, 0, this.origin.width, this.origin.height],
     ];
     this.spriteIndex = 0;
-    this.animationBuffer = 25;
+    this.animationBuffer = 15;
     this.animationBufferCount = 0;
-    this.hp = 5;
+    this.hp = 20;
     this.maxHP = this.hp;
     this.tags = ["Monster"];
   }
@@ -40,8 +43,8 @@ export class BlueSlime extends Monster {
   }
 
   update() {
-    this.updatePosition();
     this.updateAnimation();
+    this.updatePosition();
     this.updateHPBar();
   }
 
